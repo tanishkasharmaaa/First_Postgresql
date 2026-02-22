@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.ts",
-    "seed": "ts-node src/seed.ts",
-    "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit"
-  },
+  "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+  "build": "tsc",
+  "start": "node dist/index.js",
+  "seed": "ts-node src/seed.ts",
+  "clean": "rm -rf dist",
+  "type-check": "tsc --noEmit"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
