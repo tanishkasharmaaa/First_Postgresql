@@ -245,38 +245,8 @@ const seedDatabase = async () => {
                 brand: "Google",
                 rating: 4.7,
             },
-            // Generate additional 35+ products
-            ...Array.from({ length: 35 }, (_, i) => ({
-                title: `Premium Product ${String(i + 1).padStart(2, "0")}`,
-                description: `High-quality product designed for various needs and preferences. Product #${i + 1} in our extensive collection.`,
-                price: Math.floor(Math.random() * 3000) + 99,
-                discount_percent: Math.floor(Math.random() * 30),
-                stock: Math.floor(Math.random() * 100) + 5,
-                image_url: `https://images.unsplash.com/photo-${1500000000 + Math.random() * 1000000}?w=500&h=500&fit=crop`,
-                category: [
-                    "Electronics",
-                    "Laptops",
-                    "Audio",
-                    "Wearables",
-                    "Tablets",
-                    "Cameras",
-                    "Gaming",
-                    "TVs",
-                ][Math.floor(Math.random() * 8)],
-                brand: [
-                    "Apple",
-                    "Samsung",
-                    "Sony",
-                    "Dell",
-                    "HP",
-                    "Lenovo",
-                    "Canon",
-                    "Nintendo",
-                    "Microsoft",
-                    "Google",
-                ][Math.floor(Math.random() * 10)],
-                rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-            })),
+            // Removed: Generate additional 35+ products (causing hang on remote DB)
+            // Using only 13 core products for faster seeding
         ];
         const productIds = [];
         for (const product of productsData) {
@@ -295,27 +265,6 @@ const seedDatabase = async () => {
             ]);
             const pid = result.rows[0].id;
             productIds.push(pid);
-            // Insert multiple images for each product into product_images (1 primary + 2-3 extras)
-            const images = [];
-            if (product.image_url) {
-                images.push({ url: product.image_url, is_primary: true });
-            }
-            const extraCount = 2 + Math.floor(Math.random() * 2); // 2-3 extra images
-            for (let j = 0; j < extraCount; j++) {
-                const url = `https://images.unsplash.com/photo-${Math.floor(1500000000 + Math.random() * 1000000)}?w=800&h=800&fit=crop`;
-                images.push({ url, is_primary: false });
-            }
-            for (const img of images) {
-                await client.query(`INSERT INTO product_images (product_id, url, is_primary) VALUES ($1, $2, $3)`, [pid, img.url, img.is_primary]);
-            }
-            // Ensure product.image_url points to primary image (in case it was missing)
-            if ((!product.image_url || product.image_url.length === 0) &&
-                images.length) {
-                await client.query(`UPDATE products SET image_url=$1 WHERE id=$2`, [
-                    images[0].url,
-                    pid,
-                ]);
-            }
         }
         console.log(`✅ Created ${productIds.length} products\n`);
         // Seed Todos (20+)
